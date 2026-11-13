@@ -282,8 +282,12 @@ body.photo #hud, body.photo #pad, body.photo #aim { display: none; }
   scene.background = scene.fog.color;
   var camera = new THREE.PerspectiveCamera(55, 1, 0.1, 600);
 
-  var LV = 1, BOOT = null; try { BOOT = JSON.parse(localStorage.getItem("dusk_boot")); localStorage.removeItem("dusk_boot"); } catch (e) { BOOT = null; } if (BOOT && [1, 2, 3, 4, 5].indexOf(Number(BOOT.lv)) >= 0) LV = Number(BOOT.lv);
-  var LVSKY = { 1: [0xf59a62, 0x6a3f8a, 0x0a0e2a], 2: [0xffc27a, 0xd8705a, 0x3a2c6a], 3: [0xcfe9ff, 0x5f86b8, 0x14244e], 4: [0xffd9c8, 0x8f78c4, 0x2a2868], 5: [0xffa860, 0x5e3c34, 0x140e10] }, LVSUN = { 3: 0xdcefff, 4: 0xffe6f2, 5: 0xffb27a };
+  var LV = 1, BOOT = null; try { BOOT = JSON.parse(localStorage.getItem("dusk_boot")); localStorage.removeItem("dusk_boot"); } catch (e) { BOOT = null; } if (BOOT && Number(BOOT.lv) >= 1 && Number(BOOT.lv) <= 9) LV = Math.floor(Number(BOOT.lv));
+  var LVSKY = {
+    1: [0xf59a62, 0x6a3f8a, 0x0a0e2a], 2: [0xffc27a, 0xd8705a, 0x3a2c6a], 3: [0xcfe9ff, 0x5f86b8, 0x14244e],
+    4: [0xff8a3c, 0x8e2f24, 0x1c0a10], 5: [0x8fa6b8, 0x4a5a70, 0x1a2230], 6: [0xbfe07a, 0x3f7a4a, 0x0d2418],
+    7: [0xffc9a8, 0x7a86b8, 0x16203c], 8: [0xffa860, 0x5e3c34, 0x140e10], 9: [0xffb0d4, 0xc8588e, 0x2e1038]
+  }, LVSUN = { 3: 0xdcefff, 4: 0xffb070, 5: 0xcfd8e4, 6: 0xe4ffc0, 7: 0xffd8c0, 8: 0xffb27a, 9: 0xffc4e0 };
   /* ================= regions ================= */
   var ZONES = [
     { name: "Lantern Camp",  lo: 0x3f5a38, hi: 0x66744a, fog: 0x4a3a6e, near: 16, far: 105, css: "#6f7f4c" },
@@ -299,27 +303,18 @@ body.photo #hud, body.photo #pad, body.photo #aim { display: none; }
     { name: "Mirage Oasis",  lo: 0x7a8246, hi: 0xc4ae68, fog: 0x86b4ac, near: 22, far: 140, css: "#7ab0a0" },
     { name: "Glass Dunes",   lo: 0xa8482a, hi: 0xd8743a, fog: 0xc8603c, near: 18, far: 120, css: "#d8743a" }
   ];
-  if (LV === 3) ZONES = [
-    { name: "Frost Camp",    lo: 0xc8dcea, hi: 0xeef6ff, fog: 0x9cc0dc, near: 22, far: 130, css: "#c8dcea" },
-    { name: "Frozen Lake",   lo: 0x9cc4d8, hi: 0xd6ecf8, fog: 0x8ab8d4, near: 18, far: 115, css: "#9cc4d8" },
-    { name: "Glacier Pass",  lo: 0x7f9fb8, hi: 0xb8d0e0, fog: 0x6a88a8, near: 14, far: 100, css: "#7f9fb8" },
-    { name: "Aurora Fields", lo: 0x6f8fa8, hi: 0xa8c8c8, fog: 0x4a7a8e, near: 16, far: 120, css: "#6fa8a0" },
-    { name: "Crystal Ridge", lo: 0x8a9cc8, hi: 0xc8d4f0, fog: 0x7a86b8, near: 12, far: 95,  css: "#8a9cc8" }
-  ];
-  if (LV === 4) ZONES = [
-    { name: "Garden Gate",  lo: 0x6f9a52, hi: 0x9ac070, fog: 0xc8a8d8, near: 20, far: 130, css: "#9ac070" },
-    { name: "Lily Terrace", lo: 0x5f9a6a, hi: 0x8cc4a0, fog: 0xb8a0d0, near: 18, far: 120, css: "#8cc4a0" },
-    { name: "Marble Walk",  lo: 0xc8c0b0, hi: 0xe4dccb, fog: 0xd8b8c8, near: 22, far: 135, css: "#e4dccb" },
-    { name: "Wind Orchard", lo: 0x7a9e5c, hi: 0xb8c880, fog: 0xa8b8e0, near: 18, far: 125, css: "#b8c880" },
-    { name: "Cloud Rim",    lo: 0x9a8ac0, hi: 0xd0c0e8, fog: 0xe0c0e0, near: 14, far: 100, css: "#d0c0e8" }
-  ];
-  if (LV === 5) ZONES = [
-    { name: "Forward Base",    lo: 0x5a5a48, hi: 0x7a7458, fog: 0x4a4638, near: 16, far: 100, css: "#7a7458" },
-    { name: "Mansion Grounds", lo: 0x4a4a3a, hi: 0x6a6450, fog: 0x3a3428, near: 14, far: 96,  css: "#6a6450" },
-    { name: "Scorched Lawn",   lo: 0x3a3228, hi: 0x5a4a3a, fog: 0x2e2620, near: 12, far: 90,  css: "#5a4a3a" },
-    { name: "Crater Field",    lo: 0x4a3c30, hi: 0x6e5a48, fog: 0x3a2c24, near: 14, far: 96,  css: "#6e5a48" },
-    { name: "Ash Ridge",       lo: 0x2e2a2a, hi: 0x4a4444, fog: 0x2a2424, near: 12, far: 92,  css: "#4a4444" }
-  ];
+  var LVZONES = {
+    3: [["Frost Camp",0xc8dcea,0xeef6ff,0x9cc0dc],["Frozen Lake",0x9cc4d8,0xd6ecf8,0x8ab8d4],["Glacier Pass",0x7f9fb8,0xb8d0e0,0x6a88a8],["Aurora Fields",0x6f8fa8,0xa8c8c8,0x4a7a8e],["Crystal Ridge",0x8a9cc8,0xc8d4f0,0x7a86b8]],
+    4: [["Cinder Camp",0x5a3830,0x8a5240,0x6a3020],["Ash Flats",0x463026,0x6e4836,0x5a2a1c],["Obsidian Rise",0x2e2628,0x4e4044,0x3a2420],["Lava Channel",0x7a3418,0xc06028,0x8a2e10],["Magma Rim",0x6a2e20,0xa04a26,0x742c14]],
+    5: [["Storm Camp",0x4a5c50,0x6e8470,0x5a6e7a],["Flood Basin",0x3e5460,0x5e7c88,0x4a6472],["Wind Bluff",0x56604e,0x7c8a68,0x606e78],["Rain Moor",0x44523e,0x667458,0x526272],["Thunder Ridge",0x3a4450,0x5a6672,0x44505e]],
+    6: [["River Camp",0x4a7a3a,0x74a850,0x3e6a46],["Fern Hollow",0x386a34,0x5e9448,0x33603e],["Canopy Deep",0x27512c,0x487438,0x234a32],["Vine Gorge",0x426e2e,0x6a9842,0x3a6238],["Root Terrace",0x55803c,0x82ac56,0x48704a]],
+    7: [["Ford Camp",0x6a8a52,0x96bc72,0x8aa0b0],["East Bank",0x5e8456,0x8ab478,0x7e98ac],["Willow Bend",0x4e7a5e,0x7aa882,0x6e90a4],["West Bank",0x708a4c,0x9cbc6c,0x84a0b4],["Stone Shallows",0x8a8e78,0xb4b89c,0x94a4ae]],
+    8: [["Forward Base",0x5a5a48,0x7a7458,0x4a4638],["Mansion Grounds",0x4a4a3a,0x6a6450,0x3a3428],["Scorched Lawn",0x3a3228,0x5a4a3a,0x2e2620],["Crater Field",0x4a3c30,0x6e5a48,0x3a2c24],["Ash Ridge",0x2e2a2a,0x4a4444,0x2a2424]],
+    9: [["Sugar Camp",0xe88ab4,0xffc0da,0xc2628e],["Gumdrop Hills",0xd870a8,0xffa8ca,0xb05488],["Mint Hollow",0x5ec4a4,0x8fe0c6,0x4a9e86],["Liquorice Walk",0x4e3a50,0x7a5c74,0x3e2e44],["Syrup Lake",0xe08040,0xffb070,0xb85c28]]
+  };
+  if (LVZONES[LV]) ZONES = LVZONES[LV].map(function (Z, zi) {
+    return { name: Z[0], lo: Z[1], hi: Z[2], fog: Z[3], near: [20, 18, 15, 17, 14][zi], far: [128, 118, 102, 118, 98][zi], css: "#" + ("00000" + Z[2].toString(16)).slice(-6) };
+  });
   ZONES.forEach(function (z) { z.cLo = col(z.lo); z.cHi = col(z.hi); z.cFog = col(z.fog); });
   var DIRS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
   function zw(x, z) {
@@ -331,20 +326,74 @@ body.photo #hud, body.photo #pad, body.photo #aim { display: none; }
     return w;
   }
   function zoneAt(x, z) { var w = zw(x, z), b = 0; for (var i = 1; i < 5; i++) if (w[i] > w[b]) b = i; return b; }
-  var LAKE = { x: 0, z: 76 }, WATER = -0.75;
+  var WATER = -0.75;
   var CRATERS = [[30, 20, 7], [-40, 34, 6], [16, -46, 6], [-26, -30, 5]];
+  /* Each level owns its beacon layout, terrain shape and body of water. */
+  var MAPS = {
+    1: { marks: [[0, -80], [82, 0], [0, 56], [-82, 0]],
+         lake: { x: 0, z: 76, r0: 13, r1: 31, depth: -2.0 },
+         shape: function (x, z, d, w, h) { return h; } },
+    2: { marks: [[-58, -66], [80, -20], [36, 70], [-78, 34]],
+         lake: { x: 40, z: 72, r0: 7, r1: 17, depth: -1.6 },
+         shape: function (x, z, d, w, h) { return h + Math.abs(Math.sin(x * 0.05 + Math.sin(z * 0.035) * 1.6)) * 2.8 * smooth(20, 42, d) * (1 - w[2] * 0.75) * (1 - w[3] * 0.6); } },
+    3: { marks: [[60, -60], [62, 58], [-60, 60], [-58, -62]],
+         lake: { x: 0, z: 0, r0: 20, r1: 44, depth: -1.3 },
+         shape: function (x, z, d, w, h) { return h * 0.55 + Math.abs(Math.sin(x * 0.075 + 1.3) * Math.cos(z * 0.065)) * 4.2 * smooth(44, 86, d); } },
+    4: { marks: [[0, -72], [90, 10], [26, 84], [-84, -22]],
+         lake: { x: -46, z: 46, r0: 6, r1: 15, depth: -1.4 },
+         shape: function (x, z, d, w, h) {
+           h *= 0.5;
+           var cone = Math.max(0, 1 - d / 50); h += cone * cone * 13;
+           h -= 5.5 * (1 - smooth(0, 15, d));                       /* crater mouth */
+           h -= 1.8 * (1 - smooth(0, 7, Math.abs(Math.sin(Math.atan2(z, x) * 2.5) * 26 + 0 - (d - 60))));
+           return h; } },
+    5: { marks: [[-46, -78], [86, -34], [54, 70], [-78, 32]],
+         lake: { x: 6, z: 30, r0: 10, r1: 26, depth: -1.8, sx: 1.7, sz: 1 },
+         shape: function (x, z, d, w, h) {
+           h *= 0.7;
+           h += Math.round(Math.sin(x * 0.035) * 2 + Math.cos(z * 0.03) * 2) * 1.5 * smooth(18, 50, d);  /* plateaus */
+           h -= 2.4 * (1 - smooth(0, 9, Math.abs(z + 20 - Math.sin(x * 0.04) * 14)));                    /* gully */
+           return h; } },
+    6: { marks: [[16, -92], [90, 24], [-36, 90], [-90, -30]],
+         lake: { x: -34, z: -12, r0: 6, r1: 14, depth: -1.5 },
+         shape: function (x, z, d, w, h) {
+           h *= 0.85;
+           h += Math.abs(Math.sin(x * 0.13) * Math.sin(z * 0.11)) * 2.6 * smooth(10, 34, d);             /* root mounds */
+           h += smooth(60, 104, d) * 5;                                                                  /* canopy wall banks up */
+           return h; } },
+    7: { marks: [[-72, -58], [66, -68], [78, 52], [-60, 70]],
+         lake: { x: 0, z: 38, r0: 6, r1: 15, depth: -2.4, sx: 11, sz: 1 },
+         shape: function (x, z, d, w, h) {
+           h *= 0.6;
+           h += smooth(16, 52, Math.abs(z - 38)) * 3.6;                                                   /* banks rise from the river */
+           return h; } },
+    8: { marks: [[-30, -88], [92, -4], [30, 84], [-86, 20]],
+         lake: null,
+         shape: function (x, z, d, w, h) {
+           h *= 0.3;
+           for (var ci = 0; ci < CRATERS.length; ci++) h -= 2.2 * (1 - smooth(0, CRATERS[ci][2], Math.hypot(x - CRATERS[ci][0], z - CRATERS[ci][1])));
+           return h; } },
+    9: { marks: [[0, -62], [82, -26], [60, 76], [-88, 24]],
+         lake: { x: -20, z: 58, r0: 9, r1: 22, depth: -1.5 },
+         shape: function (x, z, d, w, h) {
+           h *= 0.5;
+           h += (Math.sin(x * 0.055) * Math.cos(z * 0.05) + 1) * 3.2 * smooth(8, 40, d);                 /* sugar domes */
+           return h; } }
+  };
+  var MAP = MAPS[LV] || MAPS[1], LAKE = MAP.lake;
   function H(x, z) {
     var d = Math.hypot(x, z), w = zw(x, z);
     var h = (Math.sin(x * 0.07) * 2.2 + Math.cos(z * 0.06) * 2.0 + Math.sin((x + z) * 0.13) * 1.1 + Math.cos(x * 0.21 - z * 0.17) * 0.5) * 0.8 * smooth(0, 24, d);
     h *= 1 - 0.55 * w[2];
     h += w[4] * Math.abs(Math.sin(x * 0.11) * Math.cos(z * 0.09)) * 3.4;
-    if (LV === 2) h += Math.abs(Math.sin(x * 0.05 + Math.sin(z * 0.035) * 1.6)) * 2.8 * smooth(20, 42, d) * (1 - w[2] * 0.75) * (1 - w[3] * 0.6);
-    if (LV === 3) h += Math.abs(Math.sin(x * 0.085 + 1.3) * Math.cos(z * 0.07)) * 2.4 * smooth(16, 40, d) * (1 - w[1] * 0.4);
-    if (LV === 4) { h *= 0.4; h += Math.abs(Math.sin(d * 0.13)) * 1.6 * smooth(10, 26, d); }
-    if (LV === 5) { h *= 0.3; for (var ci = 0; ci < CRATERS.length; ci++) h -= 2.2 * (1 - smooth(0, CRATERS[ci][2], Math.hypot(x - CRATERS[ci][0], z - CRATERS[ci][1]))); }
-    var ld = Math.hypot(x - LAKE.x, z - LAKE.z), lk = 1 - smooth(13, 31, ld);
-    h = h * (1 - lk) + (-2.0) * lk;
-    var dry = WATER + 0.4, off = smooth(31, 37, ld); if (h < dry && off > 0) h = h * (1 - off) + (dry - 0.08 + 0.08 * Math.exp((h - dry) * 0.6)) * off; /* no dry basins below the waterline away from the lake */
+    h = MAP.shape(x, z, d, w, h);
+    if (LAKE) {
+      var ld = Math.hypot((x - LAKE.x) / (LAKE.sx || 1), (z - LAKE.z) / (LAKE.sz || 1));
+      var lk = 1 - smooth(LAKE.r0, LAKE.r1, ld);
+      h = h * (1 - lk) + LAKE.depth * lk;
+      var dry = WATER + 0.4, off = smooth(LAKE.r1, LAKE.r1 + 6, ld);
+      if (h < dry && off > 0) h = h * (1 - off) + (dry - 0.08 + 0.08 * Math.exp((h - dry) * 0.6)) * off; /* no dry basins below the waterline away from the water */
+    } else if (h < WATER + 0.32) { h = WATER + 0.32; }
     h += smooth(110, 134, d) * 20;
     return h;
   }
@@ -396,8 +445,10 @@ body.photo #hud, body.photo #pad, body.photo #aim { display: none; }
     g.setAttribute("color", new THREE.Float32BufferAttribute(cols, 3)); g.computeVertexNormals();
     groundMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, metalness: 0 }); var m = new THREE.Mesh(g, groundMat); m.receiveShadow = true; scene.add(m);
   })();
-  var water = new THREE.Mesh(new THREE.CircleGeometry(36, 48), new THREE.MeshStandardMaterial({ color: col(0x2f8fa0), roughness: 0.12, metalness: 0.55, transparent: true, opacity: 0.82 }));
-  water.rotation.x = -Math.PI / 2; water.position.set(LAKE.x, WATER, LAKE.z); scene.add(water);
+  var water = new THREE.Mesh(new THREE.CircleGeometry(36, 48), new THREE.MeshStandardMaterial({ color: col(0x2f8fa0), roughness: 0.12, metalness: 0.55, transparent: true, opacity: 0.86 }));
+  water.rotation.x = -Math.PI / 2;
+  if (LAKE) { var wsc = (LAKE.r1 + 4) / 36; water.position.set(LAKE.x, WATER, LAKE.z); water.scale.set(wsc * (LAKE.sx || 1), 1, wsc * (LAKE.sz || 1)); scene.add(water); }
+  else { water.visible = false; water.position.set(0, WATER - 40, 0); }
 
   /* ================= world dressing ================= */
   var obst = [], dummy = new THREE.Object3D();
@@ -410,7 +461,7 @@ body.photo #hud, body.photo #pad, body.photo #aim { display: none; }
     }
     m.castShadow = !noShadow; m.receiveShadow = !noShadow; scene.add(m); return m;
   }
-  var MARKS = [{ x: 0, z: -80 }, { x: 82, z: 0 }, { x: 0, z: 56 }, { x: -82, z: 0 }];
+  var MARKS = MAP.marks.map(function (m) { return { x: m[0], z: m[1] }; });
   function clearOf(x, z, pad) {
     if (Math.hypot(x, z) < 11) return false;
     for (var i = 0; i < MARKS.length; i++) if (Math.hypot(x - MARKS[i].x, z - MARKS[i].z) < pad) return false;
@@ -775,44 +826,137 @@ body.photo #hud, body.photo #pad, body.photo #aim { display: none; }
     obst.push({ x: gx, z: gz, r: 5.6 });
     crystals(coarse ? 24 : 44, r, 4, 0.45, [0xffb060, 0xff7a4a, 0xffd890], { pad: 14, clear: 1.6 });
   })();
-  /* Levels 3 to 5: Ice Land, Sky Garden, War-zone Mansion */
+  /* ============ biomes for levels 3 to 9 ============ */
   if (LV >= 3) (function () {
-    var r = rng32(300 + LV), i, a, M, y;
+    var r = rng32(400 + LV * 7), i, a, M, y, k;
+    var BEACON_HEX = [0x6ff0e0, 0x8affb0, 0x7fd0ff, 0xff9a40];
+    function atMarks(fn) { for (var mi = 0; mi < MARKS.length; mi++) { var Mk = MARKS[mi]; fn(Mk.x, H(Mk.x, Mk.z), Mk.z, BEACON_HEX[mi], mi); obst.push({ x: Mk.x, z: Mk.z, r: 3.2 }); } }
+
+    /* ---------------- 3 · The Ice Land ---------------- */
     if (LV === 3) {
-      var ice = new THREE.MeshStandardMaterial({ color: col(0xbfe6f5), roughness: 0.08, metalness: 0.1, transparent: true, opacity: 0.82, flatShading: true, emissive: col(0x5fbfff), emissiveIntensity: 0.22 });
+      var ice = new THREE.MeshStandardMaterial({ color: col(0xbfe6f5), roughness: 0.08, metalness: 0.12, transparent: true, opacity: 0.8, flatShading: true, emissive: col(0x5fbfff), emissiveIntensity: 0.2 });
+      var snow = std(0xeaf4ff, { rough: 0.95 }), slate = std(0x7f93a8, { rough: 1, flat: true });
+      water.material.color.set(0xcdeefb); water.material.opacity = 0.94; water.material.roughness = 0.05; water.material.metalness = 0.3;
       var spires = [];
-      scatter(coarse ? 30 : 60, r, -1, 0, function (x, z, h, r) { var k = 0.7 + r() * 1.7; spires.push({ x: x, y: h + k * 1.6, z: z, sx: k * 0.9, sy: k * 3.2, sz: k * 0.9, ry: r() * 6.28, rx: (r() - 0.5) * 0.25, rz: (r() - 0.5) * 0.25 }); obst.push({ x: x, z: z, r: k * 0.8 }); }, { dmin: 16, clear: 2.2 });
+      scatter(coarse ? 34 : 70, r, -1, 0, function (x, z, h, r) { var kk = 0.7 + r() * 1.9; spires.push({ x: x, y: h + kk * 1.5, z: z, sx: kk, sy: kk * 3.4, sz: kk, ry: r() * 6.28, rx: (r() - 0.5) * 0.22, rz: (r() - 0.5) * 0.22 }); obst.push({ x: x, z: z, r: kk * 0.8 }); }, { dmin: 20, clear: 2.2 });
       inst(new THREE.ConeGeometry(1, 1, 6), ice, spires);
-      water.material.color.set(0xbfe8f5); water.material.opacity = 0.9; water.material.metalness = 0.2;
-      var icyHex = [0x9fe6ff, 0xc8f0ff, 0x9affe0, 0xffffff];
-      for (i = 0; i < MARKS.length; i++) { M = MARKS[i]; y = H(M.x, M.z);
-        mesh(new THREE.TorusGeometry(2.8, 0.45, 6, 22), ice, M.x, y + 0.3, M.z, { r: [Math.PI / 2, 0, 0] });
-        mesh(new THREE.OctahedronGeometry(1.1), glow(icyHex[i], 0.75), M.x, y + 1.6, M.z, { ns: true });
-        for (a = 0; a < 6; a++) { var pa = a / 6 * 6.2832; mesh(new THREE.ConeGeometry(0.5, 3.6, 6), ice, M.x + Math.cos(pa) * 5, y + 1.8, M.z + Math.sin(pa) * 5); obst.push({ x: M.x + Math.cos(pa) * 5, z: M.z + Math.sin(pa) * 5, r: 0.7 }); }
-        obst.push({ x: M.x, z: M.z, r: 3.3 }); }
+      var drifts = [];
+      scatter(coarse ? 30 : 60, r, -1, 0, function (x, z, h, r) { drifts.push({ x: x, y: h - 0.2, z: z, sx: 2.5 + r() * 3.5, sy: 0.7 + r() * 0.7, sz: 2 + r() * 3, ry: r() * 6.28 }); }, { dmin: 16, clear: 0 });
+      inst(new THREE.SphereGeometry(1, 8, 6), snow, drifts, true);
+      scatter(coarse ? 14 : 30, r, -1, 0, function (x, z, h, r) { addPine(x, z, h, 1.1 + r() * 0.8, col(0x8fc8d8), r); }, { dmin: 46, clear: 2 });
+      atMarks(function (mx, my, mz, hex) {
+        mesh(new THREE.TorusGeometry(2.9, 0.42, 6, 22), ice, mx, my + 0.3, mz, { r: [Math.PI / 2, 0, 0] });
+        mesh(new THREE.OctahedronGeometry(1.1), glow(hex, 0.8), mx, my + 1.7, mz, { ns: true });
+        for (var aa = 0; aa < 6; aa++) { var pa = aa / 6 * 6.2832, px = mx + Math.cos(pa) * 5.2, pz = mz + Math.sin(pa) * 5.2; mesh(new THREE.ConeGeometry(0.5, 3.8, 6), ice, px, H(px, pz) + 1.9, pz); obst.push({ x: px, z: pz, r: 0.7 }); }
+      });
+      scatter(coarse ? 24 : 46, r, -1, 0, function (x, z, h, r) { mesh(new THREE.DodecahedronGeometry(0.8 + r() * 1.5, 0), slate, x, h + 0.2, z, { r: [r(), r() * 6.28, r()], ns: true }); }, { dmin: 24, clear: 1.2 });
     }
+
+    /* ---------------- 4 · The Lava Fields ---------------- */
     if (LV === 4) {
-      var marble = std(0xeee6da, { rough: 0.45 }), jade = std(0x6fb36a, { rough: 0.85 }), stone = std(0x8a7d8c, { rough: 0.9 });
-      var cloud = new THREE.MeshBasicMaterial({ color: col(0xf6f0ff), transparent: true, opacity: 0.85, depthWrite: false, fog: false });
-      var pil = []; scatter(coarse ? 24 : 44, r, -1, 0, function (x, z, h, r) { var k = 0.8 + r() * 0.5, hh = 3 + r() * 3; pil.push({ x: x, y: h + hh / 2, z: z, sx: k, sy: hh, sz: k, c: col(0xf2ece2).multiplyScalar(0.92 + r() * 0.1) }); obst.push({ x: x, z: z, r: 0.6 * k }); }, { dmin: 14, clear: 2.2 });
-      inst(new THREE.CylinderGeometry(0.5, 0.6, 1, 12), marble, pil);
-      var gemHex = [0xf0c0ff, 0xffe8a0, 0x9ad8ff, 0xc8ffa0];
-      for (i = 0; i < MARKS.length; i++) { M = MARKS[i]; y = H(M.x, M.z);
-        mesh(new THREE.TorusGeometry(3.2, 0.5, 8, 26), marble, M.x, y + 0.35, M.z, { r: [Math.PI / 2, 0, 0] });
-        mesh(new THREE.CylinderGeometry(2.6, 2.9, 0.5, 24), jade, M.x, y + 0.25, M.z);
-        mesh(new THREE.OctahedronGeometry(1.1), glow(gemHex[i], 0.8), M.x, y + 2.2, M.z, { ns: true });
-        obst.push({ x: M.x, z: M.z, r: 3.3 }); }
-      for (i = 0; i < 12; i++) { a = i / 12 * 6.2832 + r() * 0.3; var d4 = 70 + r() * 50, fx4 = Math.cos(a) * d4, fz4 = Math.sin(a) * d4, fy4 = 28 + r() * 10;
-        mesh(new THREE.DodecahedronGeometry(6 + r() * 3, 0), jade, fx4, fy4, fz4, { s: [1.5, 0.45, 1.5] });
-        mesh(new THREE.ConeGeometry(4, 9, 7), stone, fx4, fy4 - 7, fz4, { r: [Math.PI, 0, 0] });
-        mesh(new THREE.OctahedronGeometry(1.1), glow(0xf0c0ff, 0.8), fx4, fy4 - 11, fz4, { ns: true }); }
-      for (i = 0; i < 26; i++) { a = i / 26 * 6.2832; mesh(new THREE.SphereGeometry(9, 10, 8), cloud, Math.cos(a) * (130 + r() * 30), -3 + r() * 2, Math.sin(a) * (130 + r() * 30), { s: [2.4, 0.45, 2.4], ns: true }); }
+      var obsid = std(0x241c20, { rough: 0.35, metal: 0.25, flat: true }), ash = std(0x53433c, { rough: 1 });
+      var molten = glow(0xff6a1e, 0.92), crust = std(0x3a2620, { rough: 1, flat: true });
+      water.material.color.set(0xff6a20); water.material.opacity = 0.96; water.material.roughness = 0.5; water.material.metalness = 0;
+      water.material.emissive = col(0xff5a10); water.material.emissiveIntensity = 0.85;
+      var lavaLight = new THREE.PointLight(0xff7a30, 2.6, 90, 1.5); lavaLight.position.set(0, 4, 0); scene.add(lavaLight);
+      /* glowing cracks radiating from the caldera */
+      for (i = 0; i < 16; i++) { a = i / 16 * 6.2832 + r() * 0.18; for (k = 0; k < 9; k++) { var cd = 20 + k * 9, cx = Math.cos(a) * cd + Math.sin(k) * 3, cz = Math.sin(a) * cd + Math.cos(k) * 3; mesh(new THREE.PlaneGeometry(1.5 + r() * 1.6, 7 + r() * 4), molten, cx, H(cx, cz) + 0.08, cz, { r: [-Math.PI / 2, 0, a + 1.5708], ns: true }); } }
+      var shards = [];
+      scatter(coarse ? 34 : 68, r, -1, 0, function (x, z, h, r) { var kk = 0.9 + r() * 2.2; shards.push({ x: x, y: h + kk * 0.9, z: z, sx: kk * 0.8, sy: kk * 2.6, sz: kk * 0.8, ry: r() * 6.28, rx: (r() - 0.5) * 0.4, rz: (r() - 0.5) * 0.4 }); obst.push({ x: x, z: z, r: kk * 0.7 }); }, { dmin: 20, clear: 2 });
+      inst(new THREE.TetrahedronGeometry(1, 0), obsid, shards);
+      var rubble = [];
+      scatter(coarse ? 40 : 80, r, -1, 0, function (x, z, h, r) { rubble.push({ x: x, y: h + 0.1, z: z, s: 0.5 + r() * 1.3, ry: r() * 6.28, rx: r() }); }, { dmin: 16, clear: 0.8 });
+      inst(new THREE.DodecahedronGeometry(1, 0), ash, rubble, true);
+      scatter(coarse ? 10 : 22, r, -1, 0, function (x, z, h, r) { addTree("birch", x, z, h, 1.0 + r() * 0.7, col(0x3a2a24), r, col(0x2a1e1a)); }, { dmin: 40, clear: 2 });
+      atMarks(function (mx, my, mz, hex) {
+        mesh(new THREE.CylinderGeometry(3.1, 3.6, 0.7, 8), crust, mx, my + 0.3, mz);
+        mesh(new THREE.TorusGeometry(2.6, 0.34, 6, 8), obsid, mx, my + 0.8, mz, { r: [Math.PI / 2, 0, 0] });
+        mesh(new THREE.OctahedronGeometry(1.1), glow(hex, 0.85), mx, my + 2.1, mz, { ns: true });
+        var pl = new THREE.PointLight(hex, 1.1, 18, 1.8); pl.position.set(mx, my + 2.1, mz); scene.add(pl);
+      });
     }
+
+    /* ---------------- 5 · The Storm Coast ---------------- */
     if (LV === 5) {
-      var brick = std(0x6e5e52, { rough: 1 }), scorch = std(0x231d19, { rough: 1 }), sand = std(0xa59a78, { rough: 1 }), steel = std(0x4a4f52, { rough: 0.55, metal: 0.45 });
-      var soot = new THREE.MeshBasicMaterial({ color: col(0x0d0b0a), fog: false }), smoke = new THREE.MeshBasicMaterial({ color: col(0x3a3632), transparent: true, opacity: 0.32, depthWrite: false });
+      var wet = std(0x4e5a4c, { rough: 1 }), grey = std(0x6e7682, { rough: 0.95, flat: true });
+      water.material.color.set(0x44647a); water.material.opacity = 0.88; water.material.roughness = 0.2;
+      scatter(coarse ? 18 : 40, r, -1, 0, function (x, z, h, r) { addPine(x, z, h, 1.2 + r() * 0.9, col(0x4e6a52), r); }, { dmin: 26, clear: 2.4 });
+      var boulders = [];
+      scatter(coarse ? 30 : 58, r, -1, 0, function (x, z, h, r) { var kk = 1 + r() * 2.4; boulders.push({ x: x, y: h + kk * 0.35, z: z, s: kk, ry: r() * 6.28, rx: r() * 0.4 }); obst.push({ x: x, z: z, r: kk * 0.75 }); }, { dmin: 18, clear: 1.8 });
+      inst(new THREE.DodecahedronGeometry(1, 0), grey, boulders);
+      /* puddles catching the sky */
+      var pud = new THREE.MeshStandardMaterial({ color: col(0x7e9ab0), roughness: 0.08, metalness: 0.5, transparent: true, opacity: 0.6 });
+      scatter(coarse ? 22 : 46, r, -1, 0, function (x, z, h, r) { mesh(new THREE.CircleGeometry(1.2 + r() * 2.6, 14), pud, x, h + 0.06, z, { r: [-Math.PI / 2, 0, 0], ns: true }); }, { dmin: 14, clear: 0 });
+      /* rain */
+      var rainN = coarse ? 900 : 2200, rg = new THREE.BufferGeometry(), rp = new Float32Array(rainN * 3);
+      for (i = 0; i < rainN; i++) { rp[i * 3] = (r() - 0.5) * 180; rp[i * 3 + 1] = r() * 46; rp[i * 3 + 2] = (r() - 0.5) * 180; }
+      rg.setAttribute("position", new THREE.BufferAttribute(rp, 3));
+      var rain = new THREE.Points(rg, new THREE.PointsMaterial({ color: col(0xbcd4e8), size: 0.34, transparent: true, opacity: 0.55, depthWrite: false }));
+      scene.add(rain); window.__rain = rain;
+      atMarks(function (mx, my, mz, hex) {
+        mesh(new THREE.CylinderGeometry(3.0, 3.4, 0.6, 10), grey, mx, my + 0.25, mz);
+        for (var aa = 0; aa < 4; aa++) { var pa = aa / 4 * 6.2832 + 0.78, px = mx + Math.cos(pa) * 3.4, pz = mz + Math.sin(pa) * 3.4; mesh(new THREE.CylinderGeometry(0.26, 0.34, 5.2, 7), grey, px, H(px, pz) + 2.6, pz); }
+        mesh(new THREE.OctahedronGeometry(1.05), glow(hex, 0.8), mx, my + 2.4, mz, { ns: true });
+      });
+    }
+
+    /* ---------------- 6 · The Deep Jungle ---------------- */
+    if (LV === 6) {
+      var bark = col(0x4a3a28), leaf = std(0x2f6a34, { rough: 1 }), vineM = std(0x4a7a3a, { rough: 1 });
+      water.material.color.set(0x2f6a5a);
+      /* a few enormous trees, then a dense understorey */
+      scatter(coarse ? 12 : 24, r, -1, 0, function (x, z, h, r) { addTree("oak", x, z, h, 3.4 + r() * 2.4, col(0x2c6a30).lerp(col(0x4f9440), r()), r, bark); }, { dmin: 22, clear: 5.5, pad: 12 });
+      scatter(coarse ? 26 : 56, r, -1, 0, function (x, z, h, r) { addTree("oak", x, z, h, 1.2 + r() * 1.1, col(0x327a38).lerp(col(0x6aa848), r()), r, bark); }, { dmin: 16, clear: 2.4 });
+      scatter(coarse ? 16 : 34, r, -1, 0, function (x, z, h, r) { addPine(x, z, h, 1.3 + r() * 0.9, col(0x27602e), r); }, { dmin: 20, clear: 2.2 });
+      /* ferns */
+      var ferns = [];
+      scatter(coarse ? 50 : 120, r, -1, 0, function (x, z, h, r) { for (var f = 0; f < 4; f++) ferns.push({ x: x + (r() - 0.5) * 1.6, y: h + 0.5, z: z + (r() - 0.5) * 1.6, sx: 0.8 + r() * 0.7, sy: 1.1 + r() * 0.8, sz: 0.8, ry: r() * 6.28, rz: (r() - 0.5) * 0.7 }); }, { dmin: 14, clear: 0 });
+      inst(new THREE.ConeGeometry(0.55, 1.7, 4), leaf, ferns, true);
+      /* hanging vines */
+      scatter(coarse ? 18 : 40, r, -1, 0, function (x, z, h, r) { var vl = 4 + r() * 6; mesh(new THREE.CylinderGeometry(0.07, 0.05, vl, 5), vineM, x, h + 9 - vl / 2, z, { ns: true }); }, { dmin: 18, clear: 0 });
+      /* giant mushrooms */
+      var capM = std(0xc85a6a, { rough: 0.8 }), stemM = std(0xe8dcc0, { rough: 0.9 });
+      scatter(coarse ? 10 : 22, r, -1, 0, function (x, z, h, r) { var ms = 1 + r() * 1.6; mesh(new THREE.CylinderGeometry(0.26 * ms, 0.4 * ms, 2.4 * ms, 8), stemM, x, h + 1.2 * ms, z); mesh(new THREE.SphereGeometry(1.5 * ms, 12, 8, 0, 6.2832, 0, 1.4), capM, x, h + 2.4 * ms, z); obst.push({ x: x, z: z, r: 0.6 * ms }); }, { dmin: 20, clear: 2.4 });
+      atMarks(function (mx, my, mz, hex) {
+        mesh(new THREE.CylinderGeometry(3.0, 3.4, 0.5, 12), std(0x6a5a3a, { rough: 1 }), mx, my + 0.22, mz);
+        for (var aa = 0; aa < 5; aa++) { var pa = aa / 5 * 6.2832, px = mx + Math.cos(pa) * 3.6, pz = mz + Math.sin(pa) * 3.6; mesh(new THREE.CylinderGeometry(0.3, 0.45, 4.4, 6), std(0x4a3a28, { rough: 1 }), px, H(px, pz) + 2.2, pz); }
+        mesh(new THREE.OctahedronGeometry(1.1), glow(hex, 0.8), mx, my + 2.2, mz, { ns: true });
+      });
+    }
+
+    /* ---------------- 7 · The Riverside ---------------- */
+    if (LV === 7) {
+      var stone = std(0x8a8e78, { rough: 1, flat: true }), plank = std(0x7a5a3a, { rough: 1 }), willow = col(0x5a4a30);
+      water.material.color.set(0x3f7f94); water.material.opacity = 0.8;
+      /* stepping stones and boulders in the shallows */
+      for (i = 0; i < 9; i++) { var sx2 = -64 + i * 16 + (r() - 0.5) * 5, sz2 = 38 + (r() - 0.5) * 9; mesh(new THREE.CylinderGeometry(1.5 + r() * 0.8, 1.7 + r() * 0.8, 1.5, 7), stone, sx2, WATER + 0.2, sz2); obst.push({ x: sx2, z: sz2, r: 1.3 }); }
+      /* a plank bridge across the narrows */
+      var bx = 30;
+      for (i = -7; i <= 7; i++) mesh(new THREE.BoxGeometry(3.4, 0.22, 1.5), plank, bx, WATER + 1.5, 38 + i * 1.7, { r: [0, 0, 0] });
+      for (i = -1; i <= 1; i += 2) for (k = -7; k <= 7; k += 7) mesh(new THREE.CylinderGeometry(0.16, 0.16, 2.2, 6), plank, bx + i * 1.6, WATER + 2.5, 38 + k * 1.7);
+      /* willows lining both banks */
+      scatter(coarse ? 16 : 34, r, -1, 0, function (x, z, h, r) { if (Math.abs(z - 38) > 44) return; addTree("oak", x, z, h, 1.8 + r() * 1.3, col(0x6a9a52).lerp(col(0x9ab860), r()), r, willow); }, { dmin: 18, clear: 3 });
+      scatter(coarse ? 14 : 30, r, -1, 0, function (x, z, h, r) { addTree("birch", x, z, h, 1.2 + r() * 0.9, col(0x8ab860), r); }, { dmin: 40, clear: 2.4 });
+      /* reeds along the waterline */
+      var reed = std(0x7a9a4a, { rough: 1 }), reeds = [];
+      for (i = 0; i < (coarse ? 160 : 380); i++) { var rx2 = (r() - 0.5) * 200, side = r() < 0.5 ? -1 : 1, rz2 = 38 + side * (13 + r() * 7), rh = H(rx2, rz2); if (rh < WATER - 0.4 || rh > WATER + 1.4) continue; reeds.push({ x: rx2, y: rh + 0.9, z: rz2, sx: 0.12, sy: 1.4 + r() * 1.1, sz: 0.12, rz: (r() - 0.5) * 0.4 }); }
+      inst(new THREE.CylinderGeometry(1, 1, 1, 4), reed, reeds, true);
+      var rocks7 = [];
+      scatter(coarse ? 24 : 48, r, -1, 0, function (x, z, h, r) { var kk = 0.8 + r() * 1.8; rocks7.push({ x: x, y: h + kk * 0.3, z: z, s: kk, ry: r() * 6.28 }); obst.push({ x: x, z: z, r: kk * 0.7 }); }, { dmin: 20, clear: 1.6 });
+      inst(new THREE.DodecahedronGeometry(1, 0), stone, rocks7);
+      atMarks(function (mx, my, mz, hex) {
+        mesh(new THREE.CylinderGeometry(3.0, 3.4, 0.55, 12), stone, mx, my + 0.24, mz);
+        mesh(new THREE.TorusGeometry(2.4, 0.3, 6, 18), plank, mx, my + 0.7, mz, { r: [Math.PI / 2, 0, 0] });
+        mesh(new THREE.OctahedronGeometry(1.1), glow(hex, 0.8), mx, my + 2.0, mz, { ns: true });
+      });
+    }
+
+    /* ---------------- 8 · The War-zone Mansion ---------------- */
+    if (LV === 8) {
+      var brick = std(0x6e5e52, { rough: 1 }), scorch = std(0x231d19, { rough: 1 }), sandb = std(0xa59a78, { rough: 1 }), steel = std(0x4a4f52, { rough: 0.55, metal: 0.45 });
+      var soot = new THREE.MeshBasicMaterial({ color: col(0x0d0b0a), fog: false }), smoke = new THREE.MeshBasicMaterial({ color: col(0x3a3632), transparent: true, opacity: 0.3, depthWrite: false });
       var MX = -14, MZ = -48, MY = H(MX, MZ);
-      var wall = function (x, z, w, d, hh) { mesh(new THREE.BoxGeometry(w, hh, d), brick, x, MY + hh / 2, z); };
+      var wall = function (x, z, w2, d2, hh) { mesh(new THREE.BoxGeometry(w2, hh, d2), brick, x, MY + hh / 2, z); };
       wall(MX - 5, MZ - 6, 6, 0.6, 6.5); wall(MX + 6, MZ - 6, 4, 0.6, 3.2);
       wall(MX - 6, MZ + 6, 4, 0.6, 4.2); wall(MX + 4, MZ + 6, 8, 0.6, 6.5);
       wall(MX - 8, MZ, 0.6, 12, 5.5); wall(MX + 8, MZ - 2, 0.6, 8, 2.4);
@@ -822,17 +966,58 @@ body.photo #hud, body.photo #pad, body.photo #aim { display: none; }
       mesh(new THREE.BoxGeometry(4, 0.35, 3), brick, MX - 3, MY + 5.2, MZ - 2, { r: [-0.5, 0.2, -0.3] });
       [[MX - 3, MZ - 1], [MX + 3, MZ + 2], [MX - 1, MZ + 4]].forEach(function (F) { var l = new THREE.PointLight(0xff7a30, 1.4, 20, 1.6); l.position.set(F[0], MY + 1.6, F[1]); scene.add(l); mesh(new THREE.SphereGeometry(0.7, 10, 8), glow(0xff9a40, 0.85), F[0], MY + 0.8, F[1], { ns: true }); });
       obst.push({ x: MX, z: MZ, r: 9 });
-      var bags = []; scatter(coarse ? 26 : 50, r, -1, 0, function (x, z, h, r) { bags.push({ x: x, y: h + 0.35, z: z, ry: r() * 6.28, c: col(0xb0a680).multiplyScalar(0.85 + r() * 0.25) }); }, { dmin: 12, clear: 1.2 });
-      inst(new THREE.BoxGeometry(1.8, 0.7, 0.9), sand, bags);
+      var bags = [];
+      scatter(coarse ? 26 : 50, r, -1, 0, function (x, z, h, r) { bags.push({ x: x, y: h + 0.35, z: z, ry: r() * 6.28, c: col(0xb0a680).multiplyScalar(0.85 + r() * 0.25) }); }, { dmin: 12, clear: 1.2 });
+      inst(new THREE.BoxGeometry(1.8, 0.7, 0.9), sandb, bags);
       scatter(coarse ? 8 : 14, r, -1, 0, function (x, z, h, r) { var ry = r() * 6.28; mesh(new THREE.BoxGeometry(3, 1.1, 1.8), steel, x, h + 0.8, z, { r: [0, ry, (r() - 0.5) * 0.3] }); mesh(new THREE.BoxGeometry(1.7, 0.9, 1.6), steel, x - 0.3 * Math.cos(ry), h + 1.7, z - 0.3 * Math.sin(ry), { r: [0, ry, 0] }); obst.push({ x: x, z: z, r: 1.9 }); }, { dmin: 20, clear: 2.8 });
       CRATERS.forEach(function (C) { mesh(new THREE.RingGeometry(C[2] * 0.55, C[2] * 1.12, 28), scorch, C[0], H(C[0], C[1]) + 0.08, C[1], { r: [-Math.PI / 2, 0, 0], ns: true }); });
       for (i = 0; i < 12; i++) { a = r() * 6.28; var sd = 14 + r() * 60; mesh(new THREE.SphereGeometry(4 + r() * 3, 10, 8), smoke, Math.cos(a) * sd, 9 + r() * 4, Math.sin(a) * sd, { s: [1.2, 0.6, 1.2], ns: true }); }
-      for (i = 0; i < MARKS.length; i++) { M = MARKS[i]; y = H(M.x, M.z);
-        mesh(new THREE.CylinderGeometry(0.25, 0.4, 12, 6), steel, M.x, y + 6, M.z);
-        mesh(new THREE.SphereGeometry(0.4, 8, 6), glow(0xff5a4a, 0.9), M.x, y + 12.2, M.z, { ns: true });
-        obst.push({ x: M.x, z: M.z, r: 0.8 }); }
+      atMarks(function (mx, my, mz, hex) {
+        mesh(new THREE.CylinderGeometry(0.25, 0.4, 12, 6), steel, mx, my + 6, mz);
+        mesh(new THREE.SphereGeometry(0.42, 8, 6), glow(hex, 0.9), mx, my + 12.2, mz, { ns: true });
+        mesh(new THREE.CylinderGeometry(2.6, 3.0, 0.4, 10), scorch, mx, my + 0.2, mz, { ns: true });
+      });
+    }
+
+    /* ---------------- 9 · Candyland ---------------- */
+    if (LV === 9) {
+      var icing = std(0xfff0f6, { rough: 0.5 }), mint = std(0x8fe8cc, { rough: 0.6 }), choc = std(0x5a3a28, { rough: 0.7 });
+      water.material.color.set(0xff9a50); water.material.opacity = 0.92; water.material.roughness = 0.25;
+      var candyTex = cvTex(64, 64, function (c2, w2, h2) { c2.fillStyle = "#fff"; c2.fillRect(0, 0, w2, h2); c2.strokeStyle = "#e8405a"; c2.lineWidth = 13; for (var t = -h2; t < w2 * 2; t += 30) { c2.beginPath(); c2.moveTo(t, 0); c2.lineTo(t + h2, h2); c2.stroke(); } }, 2);
+      var caneM = new THREE.MeshStandardMaterial({ map: candyTex, roughness: 0.3 });
+      /* candy canes */
+      scatter(coarse ? 20 : 42, r, -1, 0, function (x, z, h, r) {
+        var ch = 4 + r() * 4;
+        mesh(new THREE.CylinderGeometry(0.4, 0.44, ch, 10), caneM, x, h + ch / 2, z);
+        mesh(new THREE.TorusGeometry(1.0, 0.4, 8, 14, Math.PI), caneM, x, h + ch, z, { r: [0, r() * 6.28, 0] });
+        obst.push({ x: x, z: z, r: 0.7 });
+      }, { dmin: 18, clear: 2.4 });
+      /* gumdrops */
+      var gum = [], GUMC = [0xff6a9a, 0xffc24a, 0x7ad8ff, 0xa8f06a, 0xc88aff];
+      scatter(coarse ? 34 : 72, r, -1, 0, function (x, z, h, r) { var gs = 0.9 + r() * 2.2; gum.push({ x: x, y: h + gs * 0.5, z: z, sx: gs, sy: gs * 1.15, sz: gs, ry: r() * 6.28, c: col(GUMC[Math.floor(r() * 5)]) }); obst.push({ x: x, z: z, r: gs * 0.75 }); }, { dmin: 14, clear: 1.6 });
+      inst(new THREE.SphereGeometry(1, 12, 9, 0, 6.2832, 0, 1.9), std(0xffffff, { rough: 0.35 }), gum);
+      /* lollipops */
+      scatter(coarse ? 14 : 30, r, -1, 0, function (x, z, h, r) {
+        var lh = 3.5 + r() * 3.5, lc = col(GUMC[Math.floor(r() * 5)]);
+        mesh(new THREE.CylinderGeometry(0.14, 0.14, lh, 7), icing, x, h + lh / 2, z);
+        var disc = new THREE.Mesh(new THREE.CylinderGeometry(1.3 + r() * 0.8, 1.3, 0.3, 18), new THREE.MeshStandardMaterial({ color: lc, roughness: 0.25, emissive: lc, emissiveIntensity: 0.2 }));
+        disc.position.set(x, h + lh, z); disc.rotation.x = Math.PI / 2; disc.castShadow = true; scene.add(disc);
+        obst.push({ x: x, z: z, r: 0.5 });
+      }, { dmin: 20, clear: 2.2 });
+      /* swirl trees and chocolate rocks */
+      scatter(coarse ? 14 : 30, r, -1, 0, function (x, z, h, r) { addTree("pine", x, z, h, 1.3 + r() * 1.0, col(0xff9ad0).lerp(col(0xa8f0e0), r()), r, col(0x8a5a6a)); }, { dmin: 24, clear: 2.4 });
+      var crocks = [];
+      scatter(coarse ? 20 : 40, r, -1, 0, function (x, z, h, r) { var kk = 0.7 + r() * 1.5; crocks.push({ x: x, y: h + kk * 0.3, z: z, s: kk, ry: r() * 6.28 }); }, { dmin: 18, clear: 1.2 });
+      inst(new THREE.DodecahedronGeometry(1, 0), choc, crocks, true);
+      atMarks(function (mx, my, mz, hex) {
+        mesh(new THREE.CylinderGeometry(3.2, 3.6, 0.6, 16), icing, mx, my + 0.26, mz);
+        mesh(new THREE.TorusGeometry(2.5, 0.36, 8, 20), mint, mx, my + 0.8, mz, { r: [Math.PI / 2, 0, 0] });
+        for (var aa = 0; aa < 4; aa++) { var pa = aa / 4 * 6.2832 + 0.4, px = mx + Math.cos(pa) * 3.8, pz = mz + Math.sin(pa) * 3.8, ch2 = 3.4; mesh(new THREE.CylinderGeometry(0.34, 0.38, ch2, 8), caneM, px, H(px, pz) + ch2 / 2, pz); }
+        mesh(new THREE.OctahedronGeometry(1.15), glow(hex, 0.85), mx, my + 2.3, mz, { ns: true });
+      });
     }
   })();
+
   (function () {
     var r = rng32(88), rocks = [];
     scatter(70, r, -1, 0, function (x, z, h, r) { var k = 0.5 + r() * 1.3, zi = zoneAt(x, z); rocks.push({ x: x, y: h + 0.25 * k, z: z, sx: k * 1.3, sy: k * 0.9, sz: k * 1.1, ry: r() * 6, rx: r(), c: col(LV === 2 ? (zi === 4 ? 0xa8502e : 0xb08a5c) : zi === 4 ? 0x6a3526 : zi === 2 ? 0x3a3f3c : 0x5a5d72).multiplyScalar(0.8 + r() * 0.4) }); obst.push({ x: x, z: z, r: k * 1.05 }); }, { dmin: 13, clear: 2.6 });
@@ -1111,10 +1296,22 @@ body.photo #hud, body.photo #pad, body.photo #aim { display: none; }
     { t: "Defeat the Forgemaster to light the Forge beacon (west)", kind: "reach", m: 3, pts: 5 },
     { t: "Carry the flame home to Lantern Camp", kind: "home", pts: 0 }
   ];
+  /* Every villain is a monster rig; no level reuses a playable hero's body. */
   var LVCFG = {
-    3: { v: ["Frost Warden", "Glacier Wraith", "Aurora Witch", "Permafrost Giant"], p: ["Frozen Peak beacon (north)", "Crystal Pass beacon (east)", "Aurora Lake beacon (south)", "Ice Throne beacon (west)"], home: "Frost Camp", body: ["maldrin", "kaida", "vesper", "elyn"], hp: [8, 9, 10, 12], sc: [1.7, 1.7, 1.7, 1.9], tint: [0xbfe6ff, 0xffffff, 0xffffff, 0xffffff], hex: [0x9fe6ff, 0xc8f0ff, 0x9affe0, 0xffffff] },
-    4: { v: ["Cloud Sorceress", "Storm Harpy", "Sky Knight", "Wind Titan"], p: ["Garden Gate beacon (north)", "Lily Terrace beacon (east)", "Marble Walk beacon (south)", "Orchard beacon (west)"], home: "Garden Gate", body: ["vesper", "nyx", "thane", "maw"], hp: [8, 9, 10, 12], sc: [1.7, 1.7, 1.8, 2.0], tint: [0xffffff, 0xffffff, 0xffffff, 0xffffff], hex: [0xf0c0ff, 0xffe8a0, 0x9ad8ff, 0xc8ffa0] },
-    5: { v: ["Ash Colonel", "Iron Sentinel", "Crater Brute", "Blackout General"], p: ["Command Bunker beacon (north)", "Scorched Tank beacon (east)", "Crater Field beacon (south)", "Ash Ridge beacon (west)"], home: "Forward Base", body: ["r", "x", "b", "f"], hp: [9, 10, 11, 12], sc: [1.8, 1.8, 1.9, 1.9], tint: [0xffffff, 0xd8e0ff, 0xffffff, 0xffffff], hex: [0xffb070, 0x9ad0ff, 0xff7a4a, 0xff5a3a] }
+    3: { v: ["Frost Warden", "Glacier Wraith", "Rime Stalker", "Permafrost Giant"], p: ["Frozen Peak beacon (north-east)", "Crystal Pass beacon (south-east)", "Aurora Lake beacon (south-west)", "Ice Throne beacon (north-west)"], home: "Frost Camp",
+         body: ["skel", "para", "demon", "maw"], hp: [8, 9, 10, 12], sc: [1.75, 1.75, 1.8, 2.0], tint: [0xcfeaff, 0xbfe0ff, 0xa8d8ff, 0xdff2ff] },
+    4: { v: ["Cinder Imp", "Slag Brute", "Ashen Horror", "The Magma Lord"], p: ["Cinder Ridge beacon (north)", "Obsidian Rise beacon (east)", "Lava Channel beacon (south)", "Magma Rim beacon (west)"], home: "Cinder Camp",
+         body: ["goblin", "nim", "maw", "demon"], hp: [8, 9, 11, 13], sc: [1.7, 1.8, 2.0, 2.0], tint: [0xffb070, 0xff9a5a, 0xff8040, 0xff7030] },
+    5: { v: ["Drowned Scout", "Squall Shade", "Tide Howler", "The Storm Herald"], p: ["Wind Bluff beacon (north-west)", "Thunder Ridge beacon (east)", "Rain Moor beacon (south)", "Flood Basin beacon (west)"], home: "Storm Camp",
+         body: ["skel", "para", "b", "maw"], hp: [8, 10, 10, 12], sc: [1.75, 1.75, 1.8, 2.0], tint: [0x9ab8c8, 0x8aa8bc, 0xa8c0d0, 0xbcd0dc] },
+    6: { v: ["Thornling", "Vine Lurker", "Canopy Maw", "The Rot Mother"], p: ["Canopy Deep beacon (north)", "Vine Gorge beacon (east)", "Root Terrace beacon (south)", "Fern Hollow beacon (west)"], home: "River Camp",
+         body: ["goblin", "para", "maw", "nim"], hp: [8, 9, 11, 12], sc: [1.7, 1.75, 2.0, 1.9], tint: [0xa8d86a, 0x8ac060, 0x7ab050, 0x9ad070] },
+    7: { v: ["Ford Marauder", "Reed Wraith", "Shallows Brute", "The Ferryman"], p: ["West Bank beacon", "East Bank beacon", "Stone Shallows beacon", "Willow Bend beacon"], home: "Ford Camp",
+         body: ["goblin", "skel", "nim", "b"], hp: [9, 9, 11, 12], sc: [1.7, 1.75, 1.9, 1.85], tint: [0xbcd0b0, 0xd8e8f0, 0xa8c0a0, 0xc8d8e0] },
+    8: { v: ["Ash Colonel", "Iron Sentinel", "Crater Brute", "The Blackout General"], p: ["Command Bunker beacon (north)", "Scorched Tank beacon (east)", "Crater Field beacon (south)", "Ash Ridge beacon (west)"], home: "Forward Base",
+         body: ["b", "nim", "goblin", "demon"], hp: [9, 11, 11, 13], sc: [1.8, 1.9, 1.75, 2.0], tint: [0x9aa4b0, 0xb0b8c0, 0x8a9478, 0xd06a4a] },
+    9: { v: ["Sugar Sprite", "Liquorice Lurker", "Gumdrop Golem", "The Confectioner"], p: ["Gumdrop Hills beacon (north)", "Mint Hollow beacon (east)", "Syrup Lake beacon (south)", "Liquorice Walk beacon (west)"], home: "Sugar Camp",
+         body: ["goblin", "para", "nim", "demon"], hp: [9, 10, 12, 13], sc: [1.7, 1.75, 1.95, 2.0], tint: [0xffc0e0, 0xc89ad8, 0xff9ac0, 0xffd0e8] }
   };
   var LVQ = LV === 2 ? { v: ["Sun Tyrant", "Bone Warden", "Mirage Stalker", "Dune Ogre"], p: ["Sunken Temple beacon (north)", "Bone Canyon beacon (east)", "Oasis Shrine beacon (south)", "Glass Spire beacon (west)"], home: "Caravan Camp" } : LVCFG[LV] ? { v: LVCFG[LV].v, p: LVCFG[LV].p, home: LVCFG[LV].home } : null;
   if (LVQ) { [1, 3, 5, 6].forEach(function (q2, k2) { QUESTS[q2].t = "Defeat the " + LVQ.v[k2] + " to light the " + LVQ.p[k2]; }); QUESTS[7].t = "Carry the flame home to " + LVQ.home; }
@@ -1606,7 +1803,13 @@ body.photo #hud, body.photo #pad, body.photo #aim { display: none; }
     if (THREE.GLTFLoader && THREE.SkeletonUtils) { var gl = new THREE.GLTFLoader();
       gl.load("assets/soldier.json", function (g) { MODELS.soldier = g; gl.load("assets/michelle.json", function (m) { MODELS.michelle = m; try { MODELS.fClips = retarget(m, false); } catch (e) { MODELS.michelle = null; console.warn("retarget failed", e); } modelsReady();
         gl.load("assets/kade.json", function (k) { try { MODELS.rClips = retarget(k, true); MODELS.kade = k; } catch (e) { console.warn("retarget failed", e); } modelsReady(); }, undefined, function () {});
-        [["nyx", "assets/nyx.json", 0], ["kaida", "assets/kaida.json", 0], ["thane", "assets/thane.json", 0], ["elyn", "assets/elyn.json", 0], ["maldrin", "assets/maldrin.json", 0], ["vesper", "assets/vesper.json", 0], ["pip", "assets/pip.json", 0], ["nim", "assets/nim.json", 0], ["goblin", "assets/goblin.json", 0], ["demon", "assets/demon.json", 0], ["b", "assets/varn.json", 1]].filter(function (R) { if (LV === 1) return true; if (LV === 2) return ["goblin", "b", "pip", "nim"].indexOf(R[0]) < 0; if (R[0] === "b") return LV === 5; return ["nyx", "kaida", "thane", "elyn", "maldrin", "vesper"].indexOf(R[0]) >= 0; }).concat(LV === 2 ? [["skel", "assets/skel.json", 0], ["para", "assets/para.json", 0], ["maw", "assets/maw.json", 0]] : LV === 4 ? [["maw", "assets/maw.json", 0]] : []).forEach(function (R) { gl.load(R[1], function (k) { try { var hb = null; k.scene.updateMatrixWorld(true); var hy = 0, hipY = 0, tv = new THREE.Vector3(); k.scene.traverse(function (o) { if (o.isBone) { var y = o.getWorldPosition(tv).y; hy = Math.max(hy, y); if (/Hips$/.test(o.name) && !hipY) hipY = y; } }); (window.__rk = window.__rk || {})[R[0]] = [hy, hipY]; MODELS.rigs[R[0]] = { g: k, clips: retarget(k, !!R[2]), k: R[3] ? R[3] : hy > 0.05 ? clamp(1.8 / hy, 0.002, 500) : 1 }; } catch (e) { console.warn("retarget failed", e); } modelsReady(); }, undefined, function () {}); });
+        [["nyx", "assets/nyx.json", 0], ["kaida", "assets/kaida.json", 0], ["thane", "assets/thane.json", 0], ["elyn", "assets/elyn.json", 0], ["maldrin", "assets/maldrin.json", 0], ["vesper", "assets/vesper.json", 0], ["pip", "assets/pip.json", 0], ["nim", "assets/nim.json", 0], ["goblin", "assets/goblin.json", 0], ["demon", "assets/demon.json", 0], ["b", "assets/varn.json", 1]].concat([["skel", "assets/skel.json", 0], ["para", "assets/para.json", 0], ["maw", "assets/maw.json", 0]]).filter(function (R) {
+          var HEROR = ["nyx", "kaida", "thane", "elyn", "maldrin", "vesper", "pip", "nim"];
+          if (HEROR.indexOf(R[0]) >= 0) return true;                               /* playable bodies, always */
+          if (LV === 1) return true;
+          var need = LV === 2 ? ["demon", "skel", "para", "maw"] : (LVCFG[LV] ? LVCFG[LV].body : []);
+          return need.indexOf(R[0]) >= 0;                                          /* this level's villains only */
+        }).forEach(function (R) { gl.load(R[1], function (k) { try { var hb = null; k.scene.updateMatrixWorld(true); var hy = 0, hipY = 0, tv = new THREE.Vector3(); k.scene.traverse(function (o) { if (o.isBone) { var y = o.getWorldPosition(tv).y; hy = Math.max(hy, y); if (/Hips$/.test(o.name) && !hipY) hipY = y; } }); (window.__rk = window.__rk || {})[R[0]] = [hy, hipY]; MODELS.rigs[R[0]] = { g: k, clips: retarget(k, !!R[2]), k: R[3] ? R[3] : hy > 0.05 ? clamp(1.8 / hy, 0.002, 500) : 1 }; } catch (e) { console.warn("retarget failed", e); } modelsReady(); }, undefined, function () {}); });
         gl.load("assets/xbot.json", function (x) { if (clipOf(x, "idle") && clipOf(x, "run")) { MODELS.xbot = x; modelsReady(); } }, undefined, function () {}); }, undefined, function () { modelsReady(); }); }, undefined, function () {}); }
   })();
   var waterN = null;
@@ -1620,6 +1823,9 @@ body.photo #hud, body.photo #pad, body.photo #aim { display: none; }
       if (embers) { p = embers.geometry.attributes.position; for (i = 0; i < p.count; i++) { var rise = (t * 1.3 + emberBase[i * 4 + 3]) % 14; p.setXYZ(i, emberBase[i * 4] + Math.sin(t + i) * 0.5, emberBase[i * 4 + 1] + rise, emberBase[i * 4 + 2]); } p.needsUpdate = true; }
       flame.scale.set(1 + Math.sin(t * 11) * 0.1, 1 + Math.sin(t * 7.3) * 0.16, 1 + Math.cos(t * 9) * 0.1); flame.rotation.y = t * 1.7;
       p = sparks.geometry.attributes.position; for (i = 0; i < p.count; i++) { var up = (t * 1.1 + sparkBase[i * 4 + 3]) % 4.5; p.setXYZ(i, sparkBase[i * 4] + Math.sin(t * 2 + i) * 0.25 * up, 0.6 + up, sparkBase[i * 4 + 2] + Math.cos(t * 1.7 + i) * 0.25 * up); } p.needsUpdate = true; fireLight.intensity = 2.1 + Math.sin(t * 9) * 0.25 + Math.sin(t * 23) * 0.12;
+      if (window.__rain) { var rpos = window.__rain.geometry.attributes.position, ra = rpos.array;
+        for (var ri = 1; ri < ra.length; ri += 3) { ra[ri] -= dt * 46; if (ra[ri] < 0) { ra[ri] += 46; ra[ri - 1] = me.x + (Math.random() - 0.5) * 170; ra[ri + 1] = me.z + (Math.random() - 0.5) * 170; } }
+        rpos.needsUpdate = true; }
       water.position.y = WATER + Math.sin(t * 0.7) * 0.03; if (waterN) waterN.offset.set(t * 0.012, t * 0.008);
       for (i = 0; i < aurora.length; i++) aurora[i].visible = LV === 1 || LV === 3; for (i = 0; i < aurora.length; i++) aurora[i].material.opacity = 0.2 + Math.sin(t * 0.3 + i * 1.7) * 0.12;
     }
@@ -1628,7 +1834,17 @@ body.photo #hud, body.photo #pad, body.photo #aim { display: none; }
   }
   var last = performance.now(), introA = 0;
   var coverFix = false, cover = true, CV = (function () { for (var k = 0; k < 60; k++) { var x = 6 + (k % 6) * 1.7 - (k / 6 | 0) * 1.3, z = -50 + (k / 6 | 0) * 1.6; if (freeAt(x, z, 2.6) && freeAt(x - 3.6, z - 5.5, 1.2) && freeAt(x - 0.6, z - 9, 1.2) && freeAt(x - 1.5, z + 4.6, 2)) return { x: x, z: z }; } return { x: 6, z: -50 }; })();
-  var LEVELS = [{ n: "The Island", d: "Glimmerwood, graves, lake and embers. Four villains, four beacons.", ready: true }, { n: "The Desert", d: "Sunken temple, bone canyon, oasis and glass dunes. Four villains, four beacons.", ready: true }, { n: "The Ice Land", d: "Frozen lake, glacier pass and aurora fields. Four frost villains, four beacons.", ready: true }, { n: "The Sky Garden", d: "Marble terraces and floating islands above the clouds. Four sky villains, four beacons.", ready: true }, { n: "The War-zone Mansion", d: "A ruined estate, craters and burning ground. Four warlords, four beacons.", ready: true }];
+  var LEVELS = [
+    { n: "The Island", d: "Glimmerwood, graves, lake and embers.", ready: true },
+    { n: "The Desert", d: "Sunken temple, bone canyon and glass dunes.", ready: true },
+    { n: "The Ice Land", d: "A frozen lake ringed by ice spires and aurora.", ready: true },
+    { n: "The Lava Fields", d: "A living caldera, obsidian shards and molten cracks.", ready: true },
+    { n: "The Storm Coast", d: "Flooded plateaus and gullies under hard rain.", ready: true },
+    { n: "The Deep Jungle", d: "Giant trees, ferns and hanging vines.", ready: true },
+    { n: "The Riverside", d: "A river crossing, stepping stones and willows.", ready: true },
+    { n: "The War-zone Mansion", d: "A ruined estate, craters and burning ground.", ready: true },
+    { n: "Candyland", d: "Sugar hills, candy canes and a syrup lake.", ready: true }
+  ];
   function unlocked() { try { return Math.max(1, Number(localStorage.getItem("dusk_lvl")) || 1); } catch (e) { return 1; } }
   function toIntro() { cover = false; $("cover").hidden = true; $("levels").hidden = true; $("intro").hidden = false; bots.forEach(function (b, i) { b.x = BOT_SPAWN[i][0]; b.z = BOT_SPAWN[i][1]; b.h.group.visible = false; place(b.h, b); }); showNames(true);
     $("introTxt").textContent = mode === "solo" ? "Level " + LV + ", " + LEVELS[LV - 1].n + ". Follow your goals, beat the four villains, light their beacons and carry the flame home. Three lives. Raiders will hunt you." : "Multiplayer. Pick a traveller nobody else has taken. Light the beacons or be first to 40 light. Empty seats are filled by AI rivals.";
